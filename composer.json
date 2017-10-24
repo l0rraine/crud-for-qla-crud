@@ -1,0 +1,21 @@
+{
+    "name": "qla/crud",
+    "description": "package for qla crud things",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "l0rraine",
+            "email": "idn.lee@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "laravelcollective/html": "^5.4",
+        "stevenyangecho/laravel-u-editor": "^1.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Qla\\Crud\\": "src"
+        }
+    }
+}
