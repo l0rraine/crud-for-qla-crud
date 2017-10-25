@@ -26,11 +26,9 @@ class CrudServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/resources/views' => resource_path('views/vendor/qla/base'),
-        ], 'view');
-
-        $this->publishes([
             __DIR__.'/public' => public_path('vendor/qla'),
-        ], 'public');
+        ], 'qla');
+
 
 
         \Form::component('requiredText', 'crud::components.requiredTextbox', [
