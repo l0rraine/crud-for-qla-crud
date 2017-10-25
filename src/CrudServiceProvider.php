@@ -25,7 +25,7 @@ class CrudServiceProvider extends ServiceProvider
 
 
         $this->publishes([
-            __DIR__.'/resources/views' => resource_path('views/vendor/qla/base'),
+            __DIR__.'/resources/views' => resource_path('views/vendor/qla/crud'),
             __DIR__.'/public' => public_path('vendor/qla'),
         ], 'qla');
 
