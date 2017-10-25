@@ -11,7 +11,8 @@
     "minimum-stability": "dev",
     "require": {
         "laravelcollective/html": "^5.4",
-        "stevenyangecho/laravel-u-editor": "^1.4"
+        "stevenyangecho/laravel-u-editor": "^1.4",
+        "qla/base": "^0.1.0"
     },
     "autoload": {
         "psr-4": {
