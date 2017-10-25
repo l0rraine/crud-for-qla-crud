@@ -1,7 +1,7 @@
 {{-- index的路由为 $crud->getFullRoute() . '.index'--}}
-@extends('qla::empty')
+@extends('crud::base.empty')
 @section('content_header')
-    @include('qla::content_header',['page'=>
+    @include('crud::base.content_header',['page'=>
     [
             'name' => isset($crud->description)? $crud->description : '编辑' . $crud->title,
             'describe' => '',

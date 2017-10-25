@@ -1,8 +1,8 @@
 {{-- index的路由为 $crud->getIndexUrl() --}}
 
-@extends('qla::empty')
+@extends('crud::base.empty')
 @section('content_header')
-    @include('qla::content_header',['page'=>
+    @include('crud::base.content_header',['page'=>
     [
             'name' => isset($crud->description)? $crud->description : '新增' . $crud->title,
             'describe' => '',

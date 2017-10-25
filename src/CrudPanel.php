@@ -53,7 +53,7 @@ class CrudPanel
     public $indexRecursive = false;
 
     /*
-     * 自行规定view的前缀，实际路径为 admin.pages.$viewName.['create','update','list']
+     * 自行规定view的前缀，实际路径为 manager.pages.$viewName.['create','update','list']
      * @var string
      */
     public $viewName = '';
@@ -67,7 +67,7 @@ class CrudPanel
 
     /**
      * Set the route for this CRUD.
-     * Ex: admin/article.
+     * Ex: manager/article.
      *
      * @param [string] Route name.
      */
@@ -78,7 +78,7 @@ class CrudPanel
 
     /**
      * Set the route for this CRUD using the route name.
-     * Ex: admin.article.
+     * Ex: manager.article.
      *
      * @param [string] Route name.
      * @param [array] Parameters.
