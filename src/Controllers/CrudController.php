@@ -72,6 +72,7 @@ class CrudController extends BaseController
 
     public function getIndexJson()
     {
+        return json_encode($this->data);
     }
 
     public function getAdd()

@@ -41,7 +41,6 @@
         @include($crud->viewName . '.index')
     </div>
     <div id="myToolbar" class="btn-toolbar" role="toolbar">
-        {{--TODO:增加权限控制--}}
 
         <div class="btn-group" style="margin-right: 5px;">
             {{--@permission('create.' . $crud->permissionName)--}}
