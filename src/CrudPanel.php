@@ -6,7 +6,8 @@ use Qla\Crud\PanelTraits\Access;
 
 class CrudPanel
 {
-    use Access;
+    //TODO:添加权限管理
+//    use Access;
 
     /*
      * 路由起始名，如，Role.edit 的$route='Role'
@@ -147,6 +148,7 @@ class CrudPanel
     public function setPermissionName($permissionName)
     {
         $this->permissionName = $permissionName;
-        $this->hasAccessOrFail($permissionName);
+        return true;
+//        $this->hasAccessOrFail($permissionName);
     }
 }
