@@ -1,4 +1,4 @@
-{{-- index的路由为 $crud->getFullRoute() . '.index'--}}
+{{-- index的路由为 $crud->getIndexUrl()--}}
 @extends('crud::base.empty')
 @section('content_header')
     @include('crud::base.content_header',['page'=>
@@ -20,11 +20,8 @@
 
 @section('content')
     <div class="col-md-8 col-md-offset-2">
-        {{--TODO:add permisssion --}}
-        {{--@permission('list.' . $crud->permissionName)--}}
         <a href="{{$crud->getIndexUrl() }}"><i class="fa fa-angle-double-left"></i>
             返回{{$crud->title}}列表</a>
-        {{--@endpermission--}}
         <br><br>
         <div class="widget-box">
             <div class="widget-header">
@@ -33,7 +30,6 @@
 
             <div class="widget-body">
                 <div class="widget-main padding-6" style="margin-top: 20px;">
-
                     {!! Form::model($model,['url' => route($crud->route . '.edit.post'),'class'=>'form-horizontal']) !!}
                     <fieldset>
                         @include($crud->viewName . '.edit')

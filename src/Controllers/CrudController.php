@@ -109,6 +109,7 @@ class CrudController extends BaseController
         return view('crud::update', $this->data);
     }
 
+
     public function updateCrud(Request $request = null)
     {
         if (isset($this->validator)) {
@@ -127,6 +128,18 @@ class CrudController extends BaseController
         } else {
             return redirect()->to($this->getRedirectUrl())->withInput()->withErrors(['0' => '修改'.$this->crud->title.'信息时出现错误，请联系管理员'], $this->errorbag());
         }
+    }
+
+    public function getCustomEdit($id)
+    {
+        $this->data['crud'] = $this->crud;
+
+        return view('crud::custom-update', $this->data);
+    }
+
+    public function postCustomEdit($id = null){
+
+        return $this->performSaveAction();
     }
 
     public function del($selectionJson)
