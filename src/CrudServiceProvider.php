@@ -64,7 +64,6 @@ class CrudServiceProvider extends ServiceProvider
     public function register()
     {
         // register its dependencies
-        $this->app->register(\Qla\Base\BaseServiceProvider::class);
         $this->app->register(\Collective\Html\HtmlServiceProvider::class);
 
         // register their aliases
@@ -72,6 +71,7 @@ class CrudServiceProvider extends ServiceProvider
         $loader->alias('CRUD', \Qla\CRUD\CrudServiceProvider::class);
         $loader->alias('Form', \Collective\Html\FormFacade::class);
         $loader->alias('Html', \Collective\Html\HtmlFacade::class);
+
 
 
     }
