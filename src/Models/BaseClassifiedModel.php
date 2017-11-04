@@ -22,30 +22,32 @@ class BaseClassifiedModel extends Model
     /**
      * 根据id得到该父id的所有子项
      *
-     * @param int $id
+     * @param int    $id
      * @param string $with
-     * @param bool $show_root
-     * @return array|bool
+     * @param bool   $show_root
+     *
+     * @return array
      */
-    public function getAllByParentId($id = 0, $with = '', $show_root = false)
+    public function getAllByParentId($id = 0, $show_root = false)
     {
-        $data = $with == '' ? $this : $this->with($with);
+
         if ($id == 0) {
-            $data = $data->orderByRaw('parent_id,sort_id')->get()->toArray();
+            $data = $this->orderByRaw('parent_id,sort_id')->get()->toArray();
         } else {
-            $data = $data->where('class_list', 'like', '%,'.$id.',%')->orderByRaw('parent_id,sort_id')->get()->toArray();
+            $data = $this->where('class_list', 'like',
+                '%,' . $id . ',%')->orderByRaw('parent_id,sort_id')->get()->toArray();
         }
 
         $arr = $this->getAllByParentIdRecursion($id, $data);
 
         if ($show_root == true && $id == 0) {
-            $root = [];
+            $root   = [];
             $root[] = [
-                'id' => 0,
-                'title' => '根节点',
-                'parent_id' => -1,
+                'id'          => 0,
+                'title'       => '根节点',
+                'parent_id'   => -1,
                 'class_layer' => 0,
-                'pinyin' => 'gjd',
+                'pinyin'      => 'gjd',
             ];
             if (count($arr) == 0) {
                 return $root;
@@ -54,17 +56,18 @@ class BaseClassifiedModel extends Model
         }
 
         if ($show_root == true && $id != 0) {
-            $root = $data->where('id', $id)->get();
-            $arr = array_merge($root, array_values($arr));
+            $root = $this->where('id', $id)->get()->toArray();
+            $arr  = array_merge($root, array_values($arr));
         }
 
         return $arr;
     }
 
     /**
-     * @param $pid
+     * @param       $pid
      * @param array $data
-     * @return array|bool
+     *
+     * @return array
      */
     public function getAllByParentIdRecursion($pid, $data = [])
     {
@@ -85,8 +88,9 @@ class BaseClassifiedModel extends Model
     }
 
     /**
-     * @param int $pid
+     * @param int  $pid
      * @param bool $show_root
+     *
      * @return array
      * @internal param string $with
      * @internal param array $arr
@@ -108,9 +112,9 @@ class BaseClassifiedModel extends Model
 
         foreach ($elements as $element) {
             if ($element['parent_id'] == $parentId) {
-                $children = $this->buildTree($elements, $element['id']);
+                $children            = $this->buildTree($elements, $element['id']);
                 $element['children'] = $children;
-                $branch[] = $element;
+                $branch[]            = $element;
             }
         }
 
@@ -142,7 +146,7 @@ class BaseClassifiedModel extends Model
     public function hasChild()
     {
         $class = $this->getAttribute('class_list');
-        $c = $this->where('class_list', 'like', $class.'%')->count();
+        $c     = $this->where('class_list', 'like', $class . '%')->count();
         if ($c > 1) {
             return true;
         } else {
@@ -153,12 +157,13 @@ class BaseClassifiedModel extends Model
     /** 根据 ",1,2,3," 格式的文本中的id得到记录
      *
      * @param $str
+     *
      * @return Collection
      */
     public function getByIds($str)
     {
         $arrGroups = dcstr2arr($str);
-        $r = $this->whereIn('id', $arrGroups)->get();
+        $r         = $this->whereIn('id', $arrGroups)->get();
 
         return $r;
     }
@@ -169,17 +174,17 @@ class BaseClassifiedModel extends Model
         if ($init == 1) {
             $classList = '';
         }
-        $m = $this->find($id);
-        $pid = $m->parent_id;
-        $classList = ','.$id.','.$classList;
+        $m         = $this->find($id);
+        $pid       = $m->parent_id;
+        $classList = ',' . $id . ',' . $classList;
         if ($pid == 0) {
             $classList = str_replace(',,', ',', $classList);
             //$this->class_list = $classList;
             //$this->class_layer = mb_substr_count($classList, ',') - 1;
             DB::table($this->table)->where('id', $this->id)->update([
-                        'class_list' => $classList,
-                        'class_layer' => mb_substr_count($classList, ',') - 1
-                    ]);
+                'class_list'  => $classList,
+                'class_layer' => mb_substr_count($classList, ',') - 1
+            ]);
 
             //$this->update(['class_list'=>$classList]);
             return $classList;
@@ -189,7 +194,7 @@ class BaseClassifiedModel extends Model
         return $classList;
     }
 
-    public static function  setAllClassList()
+    public static function setAllClassList()
     {
         foreach (self::all() as $k => $v) {
             $v->calClassList($v['id'], 1);

@@ -8,8 +8,10 @@
 
 namespace Qla\Crud\Controllers;
 
+use Illuminate\Pagination\Paginator;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Qla\Crud\Controllers\Features\SaveActions;
 use Qla\Crud\CrudPanel;
 
@@ -19,7 +21,7 @@ class CrudController extends BaseController
     use SaveActions;
 
     /**
-     * @var \Qla\Crud\CrudPanel
+     * @var CrudPanel
      */
     public $crud;
 
@@ -28,27 +30,27 @@ class CrudController extends BaseController
      */
     public $data;
 
-    /*
-     * crud操作后要处理的数据
-     * @var array | mixed
+
+    /**
+     * @var array|mixed crud操作后要处理的数据
      */
     public $doAfterCrudData;
 
 
-    /*
+    /**
      * @var \Illuminate\Validation\Validator
      */
     public $validator;
 
     public function __construct()
     {
-        if (! $this->crud) {
+        if (!$this->crud) {
             $this->crud = app()->make(CrudPanel::class);
 
             // call the setup function inside this closure to also have the request there
             // this way, developers can use things stored in session (auth variables, etc)
             $this->middleware(function ($request, $next) {
-                $this->request = $request;
+                $this->request       = $request;
                 $this->crud->request = $request;
                 $this->setup();
 
@@ -70,9 +72,83 @@ class CrudController extends BaseController
         return view('crud::list', $this->data);
     }
 
-    public function getIndexJson()
+    public function makeIndexJson($hasPaginator = false, $useEloquentModel = true)
     {
+
+        if ($hasPaginator) {
+            if ($useEloquentModel) {
+                $this->data = $this->makePaginatorDataFromEloquent($this->data);
+            } else {
+                $this->data = $this->makePaginatorDataFromCollection($this->data);
+            }
+        }
+
         return json_encode($this->data);
+    }
+
+    private function makePaginatorDataFromEloquent($data)
+    {
+        // 进行分页
+        if (isset($_GET['offset'])) {
+            $offset      = $_GET['offset'];
+            $limit       = $_GET['limit'];
+            $currentPage = $offset / $limit + 1;
+
+            Paginator::currentPageResolver(function () use ($currentPage) {
+                return $currentPage;
+            });
+
+
+            $data       = $data->paginate($_GET['limit'])->toArray();
+            $r['total'] = $data['total'];
+
+            $i = 1;
+
+            // 生成最终数据
+            foreach ($this->data['data'] as $d) {
+                //rowNumber只能在服务器端生成，否则会全部都从1开始
+                $d              = json_decode(json_encode($d),true);
+                $d['rowNumber'] = $offset + $i;
+                $r['rows'][]    = $d;
+                $i++;
+            }
+
+            return $r;
+        }
+    }
+
+    private function makePaginatorDataFromCollection(Collection $data)
+    {
+        if (isset($_GET['offset'])) {
+
+            $total = $data->count();
+
+            $temp = $data;
+
+            $offset      = $_GET['offset'];
+            $limit       = $_GET['limit'];
+            $currentPage = $offset / $limit + 1;
+
+            $temp = $temp->forPage($currentPage, $limit);
+
+
+            $i = 1;
+
+            $data = [];
+            // 生成最终数据
+            foreach ($temp as $d) {
+                //rowNumber只能在服务器端生成，否则会全部都从1开始
+                $d              = json_decode(json_encode($d),true);
+                $d['rowNumber'] = $offset + $i;
+                $data['rows'][] = $d;
+                $i++;
+            }
+
+            $data['total'] = $total;
+
+        }
+
+        return $data;
     }
 
     public function getAdd()
@@ -90,6 +166,7 @@ class CrudController extends BaseController
             }
         }
 
+
         $model = $this->crud->model->newInstance();
         $saved = $model->fill($this->data)->save();
         if ($saved) {
@@ -98,7 +175,8 @@ class CrudController extends BaseController
 
             return $this->performSaveAction($id);
         } else {
-            return redirect()->to($this->getRedirectUrl())->withInput()->withErrors(['0' => '新建'.$this->crud->title.'时出现错误，请联系管理员'], $this->errorbag());
+            return redirect()->to($this->getRedirectUrl())->withInput()->withErrors(['0' => '新建' . $this->crud->title . '时出现错误，请联系管理员'],
+                $this->errorbag());
         }
     }
 
@@ -126,7 +204,8 @@ class CrudController extends BaseController
 
             return $this->performSaveAction($id);
         } else {
-            return redirect()->to($this->getRedirectUrl())->withInput()->withErrors(['0' => '修改'.$this->crud->title.'信息时出现错误，请联系管理员'], $this->errorbag());
+            return redirect()->to($this->getRedirectUrl())->withInput()->withErrors(['0' => '修改' . $this->crud->title . '信息时出现错误，请联系管理员'],
+                $this->errorbag());
         }
     }
 
@@ -137,18 +216,19 @@ class CrudController extends BaseController
         return view('crud::custom-update', $this->data);
     }
 
-    public function postCustomEdit($id = null){
+    public function postCustomEdit($id = null)
+    {
 
         return $this->performSaveAction();
     }
 
     public function del($selectionJson)
     {
-        $data = json_decode($selectionJson);
-        $success = true;
+        $data         = json_decode($selectionJson);
+        $success      = true;
         $successCount = 0;
         $failureCount = 0;
-        $failId = [];
+        $failId       = [];
         foreach ($data as $id) {
 
             try {
@@ -157,22 +237,22 @@ class CrudController extends BaseController
                     $successCount += 1;
                 } else {
                     $failureCount += 1;
-                    $failId[] = $id;
-                    $success = false;
+                    $failId[]     = $id;
+                    $success      = false;
                 }
             } catch (\Throwable $e) {
                 $failureCount += 1;
-                $failId[] = $id;
-                $success = false;
+                $failId[]     = $id;
+                $success      = false;
             }
         }
         if ($failureCount == 0) {
-            $message = '删除'.$successCount.'条记录成功。';
+            $message = '删除' . $successCount . '条记录成功。';
         } else {
             if ($successCount == 0) {
-                $message = '删除'.count($data).'条记录失败，请联系管理员。';
+                $message = '删除' . count($data) . '条记录失败，请联系管理员。';
             } else {
-                $message = '删除'.$successCount.'条记录成功，有'.$failureCount.'条记录失败，请联系管理员。';
+                $message = '删除' . $successCount . '条记录成功，有' . $failureCount . '条记录失败，请联系管理员。';
             }
         }
 

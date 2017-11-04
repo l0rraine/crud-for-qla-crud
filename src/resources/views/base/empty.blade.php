@@ -86,6 +86,9 @@
         document.write('<script src="{{ asset('vendor/qla/js/jquery/jquery.mobile.custom.min.js') }}" ><\/script>)');
 </script>
 
+<!-- lhgdialog scripts -->
+<script>$.dialog || document.write('<script src="{{ asset('vendor/qla/js/lhgdialog/lhgdialog.js?skin=discuz') }}"><\/script>')</script>
+
 <script src="{{ asset('vendor/qla/js/js.cookie-2.1.4.min.js') }}"></script>
 @stack('pre_js')
 <script src="{{ asset('vendor/qla/js/bootstrap/bootstrap.min.js') }}"></script>

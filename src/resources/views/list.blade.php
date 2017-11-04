@@ -47,7 +47,7 @@
             @if(Route::has($crud->route . '.add'))
                 <button name="addBtn" class="btn btn-danger" style="margin-top: 10px;" data-url="{{ route($crud->route . '.add') }}">
                     <span class="fa fa-plus" role="presentation" aria-hidden="true"></span> &nbsp;
-                    <span>增加{{ $crud->title }}</span>
+                    <span>增加</span>
                 </button>
             @endif
             {{--@endpermission--}}
