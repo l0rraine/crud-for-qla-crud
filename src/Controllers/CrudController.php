@@ -100,6 +100,7 @@ class CrudController extends BaseController
 
 
             $data       = $data->paginate($_GET['limit'])->toArray();
+            $r          = ['rows' => []];
             $r['total'] = $data['total'];
 
             $i = 1;
@@ -107,7 +108,7 @@ class CrudController extends BaseController
             // 生成最终数据
             foreach ($this->data['data'] as $d) {
                 //rowNumber只能在服务器端生成，否则会全部都从1开始
-                $d              = json_decode(json_encode($d),true);
+                $d              = json_decode(json_encode($d), true);
                 $d['rowNumber'] = $offset + $i;
                 $r['rows'][]    = $d;
                 $i++;
@@ -134,11 +135,11 @@ class CrudController extends BaseController
 
             $i = 1;
 
-            $data = [];
+            $data = ['rows' => []];
             // 生成最终数据
             foreach ($temp as $d) {
                 //rowNumber只能在服务器端生成，否则会全部都从1开始
-                $d              = json_decode(json_encode($d),true);
+                $d              = json_decode(json_encode($d), true);
                 $d['rowNumber'] = $offset + $i;
                 $data['rows'][] = $d;
                 $i++;
