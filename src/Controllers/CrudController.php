@@ -86,7 +86,7 @@ class CrudController extends BaseController
         return json_encode($this->data);
     }
 
-    private function makePaginatorDataFromEloquent($data)
+    public function makePaginatorDataFromEloquent($data)
     {
         // 进行分页
         if (isset($_GET['offset'])) {
@@ -118,7 +118,7 @@ class CrudController extends BaseController
         }
     }
 
-    private function makePaginatorDataFromCollection(Collection $data)
+    public function makePaginatorDataFromCollection(Collection $data)
     {
         if (isset($_GET['offset'])) {
 
